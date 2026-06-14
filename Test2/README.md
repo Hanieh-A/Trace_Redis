@@ -51,14 +51,6 @@ Therefore:
 
 Each Redis entry occupies approximately **87 bytes** of memory.
 
-Based on this estimate, the following dataset sizes were selected:
-
-| Number of Keys | Approximate Dataset Size | Expected Cache Level |
-| -------------- | ------------------------ | -------------------- |
-| 100            | 8.7 KB                   | Fits within L1       |
-| 1,000          | 87 KB                    | Fits within L2       |
-| 10,000         | 874 KB                   | Fits within L3       |
-| 100,000        | 8.7 MB                   | Exceeds L3           |
 
 ## Measuring Stall Cycles
 
