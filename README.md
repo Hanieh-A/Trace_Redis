@@ -175,4 +175,5 @@ More threads reduce cache miss rate but increase total execution time due to Red
 ## Author
 
 Computer Engineering Student
+
 Performance Analysis Project using `perf`
