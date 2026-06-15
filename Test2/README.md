@@ -246,7 +246,7 @@ is executed, Redis first computes the hash value of `key123` and uses it to loca
 
 This comparison process may generate additional cache misses because the actual string contents are stored separately from the hash table entry and must be fetched through pointers.
 
-![alt text](1000.svg)
+![alt text](1000_.svg)
 1000
 
 ![alt text](100_000_.svg)
