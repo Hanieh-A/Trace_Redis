@@ -28,6 +28,10 @@ LLC-load-misses:u
 # working set size
 sudo perf stat -p $(pidof redis-server) \
 -e cycles:u,instructions:u,\
+cycle_activity.stalls_l1d_miss:u,\
+cycle_activity.stalls_l2_miss:u,\
+cycle_activity.stalls_l3_miss:u,\
+cycle_activity.stalls_mem_any:u,\
 cache-references:u,cache-misses:u,\
 L1-dcache-loads:u,L1-dcache-load-misses:u,\
 l2_rqsts.miss:u,\

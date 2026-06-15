@@ -62,31 +62,35 @@ Since Redis was the only CPU-intensive process running during the experiment, To
 
 ### Cache Performance
 
-| Metric           | 100 Keys (L1) | 1,000 Keys (L2) | 10,000 Keys (L3) | 100,000 Keys (>L3) |
-| ---------------- | ------------: | --------------: | ---------------: | -----------------: |
-| Cycles           |         3.95B |           4.23B |            4.67B |              5.47B |
-| Instructions     |         3.83B |           4.41B |            4.46B |              4.40B |
-| IPC              |          0.97 |            1.04 |             0.95 |               0.80 |
-| Cache References |        17.28M |           9.66M |           12.06M |             16.77M |
-| Cache Misses     |         3.26M |           2.10M |            4.58M |              8.97M |
-| Cache Miss Rate  |        18.87% |          21.79% |           37.97% |             53.45% |
-| L1 Loads         |         1.11B |           1.27B |            1.27B |              1.25B |
-| L1 Load Misses   |        96.84M |         115.70M |          109.86M |            112.50M |
-| L1 Miss Rate     |         8.71% |           9.08% |            8.63% |              9.01% |
-| L2 Misses        |        18.70M |          10.34M |           13.11M |             17.81M |
-| LLC Loads        |         2.17M |           1.18M |            2.10M |              3.00M |
-| LLC Load Misses  |          333K |            220K |             922K |              2.07M |
-| LLC Miss Rate    |        15.36% |          18.67% |           44.01% |             68.89% |
-| Execution Time   |       30.00 s |         30.00 s |          30.00 s |            30.00 s |
+| Metric | 100 Keys | 1,000 Keys | 10,000 Keys | 100,000 Keys | 1,000,000 Keys |
+|----------|----------------:|----------------:|----------------:|----------------:|----------------:|
+| Cycles | 4,416,722,703 | 4,068,964,693 | 5,240,609,472 | 5,682,117,287 | 6,766,692,331 |
+| Instructions | 4,397,930,741 | 4,028,288,349 | 4,345,851,422 | 4,409,058,241 | 5,279,999,545 |
+| IPC | 1.00 | 0.99 | 0.83 | 0.78 | 0.78 |
+| cycle_activity.stalls_l1d_miss | 432,959,096 | 387,460,842 | 1,058,203,239 | 1,644,532,329 | 2,384,413,205 |
+| cycle_activity.stalls_l2_miss | 167,494,356 | 146,686,148 | 769,747,856 | 1,402,422,635 | 2,109,666,879 |
+| cycle_activity.stalls_l3_miss | 138,813,830 | 110,859,219 | 713,023,099 | 1,327,567,945 | 1,960,600,242 |
+| cycle_activity.stalls_mem_any | 1,102,905,792 | 977,945,927 | 1,722,395,633 | 2,268,759,116 | 3,068,200,443 |
+| Cache References | 10,222,594 | 8,967,934 | 14,257,350 | 15,708,907 | 28,142,096 |
+| Cache Misses | 2,786,973 | 2,444,719 | 5,467,843 | 8,800,941 | 17,714,226 |
+| Cache Miss Rate | 27.26% | 27.26% | 38.35% | 56.03% | 62.95% |
+| L1 Loads | 1,268,468,607 | 1,143,227,209 | 1,232,567,688 | 1,245,974,774 | 1,451,903,519 |
+| L1 Load Misses | 117,719,782 | 99,905,505 | 120,057,020 | 110,694,175 | 112,982,015 |
+| L1 Miss Rate | 9.28% | 8.74% | 9.74% | 8.88% | 7.78% |
+| L2 RQ Misses | 10,584,827 | 9,078,581 | 15,015,097 | 17,012,043 | 33,421,362 |
+| LLC Loads | 1,021,156 | 1,100,785 | 2,323,932 | 3,143,649 | 6,502,083 |
+| LLC Load Misses | 207,403 | 254,569 | 1,088,302 | 2,126,825 | 4,516,249 |
+| LLC Miss Rate | 20.31% | 23.13% | 46.83% | 67.65% | 69.46% |
+| Execution Time (s) | 30.0016 | 30.0017 | 30.0011 | 30.0012 | 30.0015 |
 
 ### Top-Down Analysis
 
-| Metric          | 100 Keys (L1) | 1,000 Keys (L2) | 10,000 Keys (L3) | 100,000 Keys (>L3) |
-| --------------- | ------------: | --------------: | ---------------: | -----------------: |
-| Retiring        |         27.3% |           27.5% |            27.1% |              27.1% |
-| Bad Speculation |          8.6% |            9.1% |             8.7% |               8.8% |
-| Frontend Bound  |         49.7% |           47.3% |            48.5% |              47.1% |
-| Backend Bound   |         14.3% |           16.1% |            15.7% |              17.0% |
+| Metric          | 100 Keys (L1) | 1,000 Keys (L2) | 10,000 Keys (L3) | 100,000 Keys (>L3) | 1,000,000 (>>L3)
+| --------------- | ------------: | --------------: | ---------------: | -----------------: | -----------------:
+| Retiring        |         27.3% |           27.5% |            27.1% |              27.1% |  25.2%
+| Bad Speculation |          8.6% |            9.1% |             8.7% |               8.8% |   9.1%
+| Frontend Bound  |         49.7% |           47.3% |            48.5% |              47.1% |   48.2%
+| Backend Bound   |         14.3% |           16.1% |            15.7% |              17.0% |   17.4%
 
 ## Analysis
 
@@ -174,7 +178,7 @@ While `perf stat` provides aggregate cache statistics, it does not reveal which 
 For the dataset containing 100 keys, cache misses were recorded using:
 
 ```bash
-sudo perf record -p <pid> -g -e cache-misses
+sudo perf record -p <pid> -g -e cache-misses:P
 ```
 
 The collected samples were stored in `perf.data` and analyzed using:
