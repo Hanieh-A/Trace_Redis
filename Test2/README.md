@@ -102,6 +102,46 @@ Overall, the results clearly demonstrate that larger working sets reduce cache e
 
 ## Effect of CPU Core Affinity
 
+### Initial Setup
+
+To ensure controlled and repeatable measurements, the Redis server is pinned to a specific CPU core.
+
+First, we check the current CPU affinity of the Redis process:
+
+```bash
+sudo taskset -cp <pid>
+````
+
+Example output:
+
+```text
+pid 6571's current affinity list: 0-7
+```
+
+Then, we restrict the process to run only on **CPU core 2**:
+
+```bash
+sudo taskset -cp 2 6571
+```
+
+After applying the change, the affinity becomes:
+
+```text
+pid 6571's current affinity list: 0-7  
+pid 6571's new affinity list: 2
+```
+
+### Purpose
+
+This setup is used to:
+
+* Reduce scheduling noise across multiple CPU cores
+* Improve consistency of cache-related measurements
+* Ensure more accurate analysis of L1/L2 cache behavior on a single core
+
+```
+```
+
 To evaluate the impact of CPU migration, the experiment with 100,000 keys was repeated while forcing Redis to run on a single CPU core.
 
 ### Comparison
@@ -205,6 +245,12 @@ GET key123
 is executed, Redis first computes the hash value of `key123` and uses it to locate the corresponding bucket. If multiple keys are stored in that bucket due to hash collisions, Redis invokes `dictSdsKeyCompare` to compare the candidate keys byte-by-byte until the correct key is found.
 
 This comparison process may generate additional cache misses because the actual string contents are stored separately from the hash table entry and must be fetched through pointers.
+
+<!-- ![alt text](1000.svg)
+1000 -->
+
+![alt text](100_000_.svg)
+100_000 keys
 
 ## Memory Access Path During a Redis Lookup
 

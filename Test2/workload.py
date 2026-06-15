@@ -3,7 +3,7 @@ import sys
 
 r = redis.Redis(host="localhost", port=6379)
 
-N = 1_000_000
+N = 100_000
 
 r.flushall()
 
