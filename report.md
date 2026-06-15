@@ -419,6 +419,24 @@ This indicates that ZRANGE performance becomes partially network-bound rather th
 
 Therefore kernel networking functions may dominate the profile instead of Redis internal algorithms.
 
+
++   68.66%     0.66%  redis-server  [kernel.kallsyms]   [k] entry_SYSCALL_64_af
++   67.72%     0.48%  redis-server  [kernel.kallsyms]   [k] do_syscall_64      
++   64.72%     0.40%  redis-server  [kernel.kallsyms]   [k] x64_sys_call       
++   47.13%     0.59%  redis-server  libpthread-2.31.so  [.] __libc_write       
++   43.25%     0.29%  redis-server  [kernel.kallsyms]   [k] __x64_sys_write    
++   42.93%     0.25%  redis-server  [kernel.kallsyms]   [k] ksys_write         
++   42.01%     0.38%  redis-server  [kernel.kallsyms]   [k] vfs_write         
++   41.38%     0.25%  redis-server  [kernel.kallsyms]   [k] new_sync_write     
++   41.14%     0.54%  redis-server  [kernel.kallsyms]   [k] sock_write_iter    
++   40.61%     0.11%  redis-server  [kernel.kallsyms]   [k] __sock_sendmsg     
++   40.29%     0.19%  redis-server  [kernel.kallsyms]   [k] inet_sendmsg       
++   40.09%     0.28%  redis-server  [kernel.kallsyms]   [k] tcp_sendmsg        
++   38.97%     1.46%  redis-server  [kernel.kallsyms]   [k] tcp_sendmsg_locked 
++   32.00%     0.33%  redis-server  [kernel.kallsyms]   [k] tcp_push           
++   31.70%     0.14%  redis-server  [kernel.kallsyms]   [k] __tcp_push_pending_
++   31.47%     0.69%  redis-server  [kernel.kallsyms]   [k] tcp_write_xmit     
+
 ---
 
 # Conclusion
